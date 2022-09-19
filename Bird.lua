@@ -1,26 +1,36 @@
 Bird = Class{}
 
-local birdImage = love.graphics.newImage('resources/images/bird.png')
+local GRAVITY = 1.5
 
-function Bird:init(x, y)
-    self.x = x
-    self.y = y
+function Bird:init()
+    self.image = love.graphics.newImage('resources/images/bird.png')
+    self.width = self.image:getWidth()
+    self.height = self.image:getHeight()
+
+    self.x = (VIRTUAL_WIDTH - self.width)/2
+    self.y = (VIRTUAL_HEIGHT - self.height)/2
 
     --Velocity
-    self.dx = 100
-    self.dy = 50
+    --self.dx = 100
+    self.dy = 0
 end
 
 function Bird:reset()
 end
 
 function Bird:update(dt)
-    self.x = self.x + self.dx * dt
-    self.y = self.y + self.dy * dt
+    -- in order to make it jump and fall again we can make the gravity in the beginning negative and at some point it will fall again
+    self.dy = self.dy + GRAVITY * dt
+
+    if love.keyboard.wasPressed('space') then
+        self.dy = -0.5
+    end
+
+    self.y = self.y + self.dy
 end
 
 function Bird:render()
-    love.graphics.draw(birdImage, self.x, self.y)
+    love.graphics.draw(self.image, self.x, self.y)
 end
 
 function Bird:collide(pipe)
