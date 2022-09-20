@@ -8,6 +8,7 @@ require 'StateMachine'
 require 'states/BaseState'
 require 'states/PlayState'
 require 'states/TitleScreenState'
+require 'states/EndState'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -28,14 +29,6 @@ local GROUND_SCROLL_SPEED = 60
 
 local BACKGROUND_LOOPING_POINT = 413
 local GROUND_LOOPING_POINT = 512
-
--- timer for when to spawn the pipes
-local spawnTimer = 0
-
-local pipePairs = {}
-local lastY = -PIPE_HEIGHT + math.random(80) + 20
-
-local gameOver = false
 
 function love.load()
     -- for the image to not be blury
@@ -60,7 +53,8 @@ function love.load()
 
     gStateMachine = StateMachine {
         ['title'] = function() return TitleScreenState() end,
-        ['play'] = function() return PlayState() end
+        ['play'] = function() return PlayState() end,
+        ['end'] = function() return EndState() end
     } 
     gStateMachine:change('title')
 
@@ -91,66 +85,20 @@ function love.draw()
     push:start()
     -- takes a drawable, and the position we want to draw it at
     love.graphics.draw(background, -backgroundScroll, 0)
+
+    gStateMachine:render()
+
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
-
-    for k, pipes in pairs(pipePairs) do
-        pipes:render()
-    end
-
-    bird:render()
-
     push:finish()
 end
 
 function love.update(dt)
     -- making the image to move
-    if gameOver == false then
-        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
-        groundScroll = (groundScroll + GROUND_SCROLL_SPEED) % GROUND_LOOPING_POINT
-
-        spawnTimer = spawnTimer + dt
-
-        checkColission()
-
-        if spawnTimer > 2  then
-            tempY = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
-            lastY = tempY
-            spawnTimer = 0
-            -- adding a new Pipe to the table of pipes
-            table.insert(pipePairs, PipePair(tempY))
-            spawnTimer = 0
-        end
-
-        for k, pipes in pairs(pipePairs) do
-            pipes:update(dt)
-            -- make sure we delete those out of the screen
-            if pipes.remove == true then
-                table.remove(pipes, k)
-            end
-        end 
-        bird:update(dt)
-    end
+    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
+    groundScroll = (groundScroll + GROUND_SCROLL_SPEED) % GROUND_LOOPING_POINT
+    
+    gStateMachine:update(dt)
 
     -- reseting the table so we don't have anything from last update
     love.keyboard.keysPressed = {}
-end
-
-function checkColission()
-    -- colission with top screen
-    if bird.y < 0 then
-        print("Bird hit top")
-        gameOver = true
-    end
-
-    if bird.y > VIRTUAL_HEIGHT - bird.height then
-        print("Bird hit bottom")
-        gameOver = true
-    end
-
-    for k, pipes in pairs(pipePairs) do
-        if bird:collide(pipes.pipes['upper']) or bird:collide(pipes.pipes['lower']) then
-            print("Bird hit pipe")
-            gameOver = true
-        end
-    end
 end

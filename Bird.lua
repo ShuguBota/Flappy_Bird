@@ -11,11 +11,17 @@ function Bird:init()
     self.y = (VIRTUAL_HEIGHT - self.height)/2
 
     --Velocity
-    --self.dx = 100
     self.dy = 0
 end
 
 function Bird:reset()
+    self.x = (VIRTUAL_WIDTH - self.width)/2
+    self.y = (VIRTUAL_HEIGHT - self.height)/2
+    self.dy = 0
+
+    pipePairs = {}
+    spawnTimer = 0
+    lastY = -PIPE_HEIGHT + math.random(80) + 20
 end
 
 function Bird:update(dt)
