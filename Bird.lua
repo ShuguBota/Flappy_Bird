@@ -34,4 +34,13 @@ function Bird:render()
 end
 
 function Bird:collide(pipe)
+    -- 4 and 2 are put so the colliding box is smaller than the bird, so the game is more forgiving
+    if self.x + 2  <= pipe.x + pipe.width and
+       self.x + self.width - 2 >= pipe.x and
+       self.y + 4 <= pipe.y + pipe.height and
+       self.y + self.height - 4 >= pipe.y then
+        return true
+    else
+        return false
+    end
 end
