@@ -2,10 +2,11 @@ EndState = Class{__includes = BaseState}
 
 function EndState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateMachine:change('play')
         -- reset the stuff for a new run?
         score = 0
         bird:reset()
+
+        gStateMachine:change('countdown')
     end
 end
 

@@ -14,6 +14,7 @@ function PipePair:init(y)
     }
 
     self.remove = false
+    self.point = false
 end
 
 function PipePair:update(dt)
@@ -23,6 +24,12 @@ function PipePair:update(dt)
         self.pipes['upper'].x = self.x
     else
         self.remove = true
+    end
+    
+    if self.x <= VIRTUAL_WIDTH/2 - 32 and self.point == false then
+        self.point = true
+        score = score + 1
+        sounds['score']:play()
     end
 end
 

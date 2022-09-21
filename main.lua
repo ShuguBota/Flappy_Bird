@@ -9,6 +9,7 @@ require 'states/BaseState'
 require 'states/PlayState'
 require 'states/TitleScreenState'
 require 'states/EndState'
+require 'states/CountDownState'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -54,9 +55,20 @@ function love.load()
     gStateMachine = StateMachine {
         ['title'] = function() return TitleScreenState() end,
         ['play'] = function() return PlayState() end,
-        ['end'] = function() return EndState() end
+        ['end'] = function() return EndState() end,
+        ['countdown'] = function() return CountDownState() end
     } 
     gStateMachine:change('title')
+
+    sounds = {
+        ['explosion'] = love.audio.newSource('resources/sounds/explosion.wav', 'static'),
+        ['hurt'] = love.audio.newSource('resources/sounds/hurt.wav', 'static'),
+        ['jump'] = love.audio.newSource('resources/sounds/jump.wav', 'static'),
+        ['score'] = love.audio.newSource('resources/sounds/score.wav', 'static'),
+        ['marios_way'] = love.audio.newSource('resources/sounds/marios_way.mp3', 'stream')
+    }
+
+    sounds['marios_way']:play()
 
     love.keyboard.keysPressed = {}
     
@@ -83,6 +95,9 @@ end
 
 function love.draw()
     push:start()
+
+    love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+
     -- takes a drawable, and the position we want to draw it at
     love.graphics.draw(background, -backgroundScroll, 0)
 
