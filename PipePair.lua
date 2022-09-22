@@ -2,15 +2,15 @@ PipePair = Class{}
 
 require 'Pipe'
 
-local PIPE_GAP = 110
-
 function PipePair:init(y)
     self.x = VIRTUAL_WIDTH + 32
     self.y = y
 
+    self.pipeGap = math.random(80, 130)
+
     self.pipes = {
         ['upper'] = Pipe('top', self.y),
-        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + PIPE_GAP)
+        ['lower'] = Pipe('bottom', self.y + PIPE_HEIGHT + self.pipeGap)
     }
 
     self.remove = false
@@ -26,7 +26,7 @@ function PipePair:update(dt)
         self.remove = true
     end
     
-    if self.x <= VIRTUAL_WIDTH/2 - 32 and self.point == false then
+    if self.x <= bird.x - 32 and self.point == false then
         self.point = true
         score = score + 1
         sounds['score']:play()

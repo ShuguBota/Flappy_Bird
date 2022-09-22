@@ -33,6 +33,11 @@ function Bird:update(dt)
         self.dy = -0.5
     end
 
+    if love.mouse.wasPressed(1) then
+        sounds['jump']:play()
+        self.dy = -0.5
+    end
+    
     self.y = self.y + self.dy
 end
 

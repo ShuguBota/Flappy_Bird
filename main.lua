@@ -68,9 +68,11 @@ function love.load()
         ['marios_way'] = love.audio.newSource('resources/sounds/marios_way.mp3', 'stream')
     }
 
+    sounds['marios_way']:setLooping(true)
     sounds['marios_way']:play()
 
     love.keyboard.keysPressed = {}
+    love.mouse.keysPressed = {}
     
     bird = Bird()
 end
@@ -88,9 +90,17 @@ function love.keypressed(key)
     end
 end
 
+function love.mousepressed(x, y, button, istouch, presses)
+    love.mouse.keysPressed[button] = true
+end
+
 -- function to check if we pressed a key
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
+end
+
+function love.mouse.wasPressed(key)
+    return love.mouse.keysPressed[key]
 end
 
 function love.draw()
@@ -116,4 +126,5 @@ function love.update(dt)
 
     -- reseting the table so we don't have anything from last update
     love.keyboard.keysPressed = {}
+    love.mouse.keysPressed = {}
 end
